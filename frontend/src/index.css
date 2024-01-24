@@ -70,7 +70,7 @@ body {
   min-height: 100vh;
   background-color: var(--BGCOLOR);
   color: var(--COLOR);
-  background-image: url('./img/background.jpg');
+  /* background-image: url('./img/background.jpg'); */
   background-size: cover;
   background-position: top right;
   background-blend-mode: multiply;
@@ -113,8 +113,9 @@ a:focus-visible {
 }
 
 .public {
-  padding: 1em;
+  /* padding: 1em; */
   flex-grow: 1;
+  margin-top: -1px;
 }
 
 .public__main,
@@ -162,10 +163,6 @@ a:focus-visible {
   gap: 0.5em;
 }
 
-.dash-container {
-  padding: 0.75em 0.5em 0.5em;
-  flex-grow: 1;
-}
 
 .dash-footer {
   font-size: 1rem;

@@ -1,49 +1,72 @@
-import { useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faFileCirclePlus,
     faFilePen,
     faUserGear,
     faUserPlus,
     faRightFromBracket
-} from "@fortawesome/free-solid-svg-icons"
-import { useNavigate, Link, useLocation } from 'react-router-dom'
-import { useSendLogoutMutation } from '../features/auth/authApiSlice'
-import useAuth from '../hooks/useAuth'
-import PulseLoader from 'react-spinners/PulseLoader'
+} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useSendLogoutMutation } from '../features/auth/authApiSlice';
+import useAuth from '../hooks/useAuth';
+import PulseLoader from 'react-spinners/PulseLoader';
 
-const DASH_REGEX = /^\/dash(\/)?$/
-const NOTES_REGEX = /^\/dash\/notes(\/)?$/
-const USERS_REGEX = /^\/dash\/users(\/)?$/
+// Import Bootstrap components
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Navbar, Nav } from 'react-bootstrap';
+
+// Regular expressions for route matching
+const DASH_REGEX = /^\/dash(\/)?$/;
+const NOTES_REGEX = /^\/dash\/notes(\/)?$/;
+const USERS_REGEX = /^\/dash\/users(\/)?$/;
 
 const DashHeader = () => {
-    const { isManager, isAdmin } = useAuth()
+    const { isManager, isAdmin } = useAuth();
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
 
-    const navigate = useNavigate()
-    const { pathname } = useLocation()
-
+    // Logout mutation hook
     const [sendLogout, {
         isLoading,
         isSuccess,
         isError,
         error
-    }] = useSendLogoutMutation()
+    }] = useSendLogoutMutation();
 
+    // Effect to navigate to the home page after successful logout
     useEffect(() => {
-        if (isSuccess) navigate('/')
-    }, [isSuccess, navigate])
+        if (isSuccess) navigate('/');
+    }, [isSuccess, navigate]);
 
-    const onNewNoteClicked = () => navigate('/dash/notes/new')
-    const onNewUserClicked = () => navigate('/dash/users/new')
-    const onNotesClicked = () => navigate('/dash/notes')
-    const onUsersClicked = () => navigate('/dash/users')
+    // Click handlers for navigation
+    const onNewNoteClicked = () => navigate('/dash/notes/new');
+    const onNewUserClicked = () => navigate('/dash/users/new');
+    const onNotesClicked = () => navigate('/dash/notes');
+    const onUsersClicked = () => navigate('/dash/users');
 
-    let dashClass = null
+    // CSS class for the header container
+    let dashClass = null;
     if (!DASH_REGEX.test(pathname) && !NOTES_REGEX.test(pathname) && !USERS_REGEX.test(pathname)) {
-        dashClass = "dash-header__container--small"
+        dashClass = "dash-header__container--small";
     }
 
-    let newNoteButton = null
+    // Logout button component
+    const logoutButton = (
+        <button
+            className="icon-button"
+            title="Logout"
+            onClick={sendLogout}
+        >
+            <FontAwesomeIcon icon={faRightFromBracket} />
+        </button>
+    );
+
+    // Error message class
+    const errClass = isError ? "errmsg" : "offscreen";
+
+    // Dynamically render buttons based on the current route
+    let newNoteButton = null;
     if (NOTES_REGEX.test(pathname)) {
         newNoteButton = (
             <button
@@ -53,10 +76,10 @@ const DashHeader = () => {
             >
                 <FontAwesomeIcon icon={faFileCirclePlus} />
             </button>
-        )
+        );
     }
 
-    let newUserButton = null
+    let newUserButton = null;
     if (USERS_REGEX.test(pathname)) {
         newUserButton = (
             <button
@@ -66,10 +89,10 @@ const DashHeader = () => {
             >
                 <FontAwesomeIcon icon={faUserPlus} />
             </button>
-        )
+        );
     }
 
-    let userButton = null
+    let userButton = null;
     if (isManager || isAdmin) {
         if (!USERS_REGEX.test(pathname) && pathname.includes('/dash')) {
             userButton = (
@@ -80,11 +103,11 @@ const DashHeader = () => {
                 >
                     <FontAwesomeIcon icon={faUserGear} />
                 </button>
-            )
+            );
         }
     }
 
-    let notesButton = null
+    let notesButton = null;
     if (!NOTES_REGEX.test(pathname) && pathname.includes('/dash')) {
         notesButton = (
             <button
@@ -94,24 +117,13 @@ const DashHeader = () => {
             >
                 <FontAwesomeIcon icon={faFilePen} />
             </button>
-        )
+        );
     }
 
-    const logoutButton = (
-        <button
-            className="icon-button"
-            title="Logout"
-            onClick={sendLogout}
-        >
-            <FontAwesomeIcon icon={faRightFromBracket} />
-        </button>
-    )
-
-    const errClass = isError ? "errmsg" : "offscreen"
-
-    let buttonContent
+    // Conditional rendering based on loading state
+    let buttonContent;
     if (isLoading) {
-        buttonContent = <PulseLoader color={"#FFF"} />
+        buttonContent = <PulseLoader color={"#FFF"} />;
     } else {
         buttonContent = (
             <>
@@ -121,26 +133,27 @@ const DashHeader = () => {
                 {userButton}
                 {logoutButton}
             </>
-        )
+        );
     }
 
+    // JSX for the entire component
     const content = (
         <>
             <p className={errClass}>{error?.data?.message}</p>
 
-            <header className="dash-header">
-                <div className={`dash-header__container ${dashClass}`}>
-                    <Link to="/dash">
-                        <h1 className="dash-header__title">techNotes</h1>
-                    </Link>
-                    <nav className="dash-header__nav">
-                        {buttonContent}
-                    </nav>
-                </div>
-            </header>
+            {/* Bootstrap Navbar component */}
+            <Navbar bg="dark" variant="dark">
+                <Navbar.Brand as={Link} to="/dash">
+                    <h1 className="dash-header__title">techNotes</h1>
+                </Navbar.Brand>
+                <Nav className="mr-auto">
+                    {buttonContent}
+                </Nav>
+            </Navbar>
         </>
-    )
+    );
 
-    return content
-}
-export default DashHeader
+    return content;
+};
+
+export default DashHeader;

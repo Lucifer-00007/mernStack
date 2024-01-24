@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { setCredentials } from './authSlice'
 import { useLoginMutation } from './authApiSlice'
@@ -66,7 +66,7 @@ const Login = () => {
             <header>
                 <nav className="navbar navbar-expand-lg bg-dark border-bottom border-body" data-bs-theme="dark" >
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="/">Employee-Login</a>
+                        <a className="navbar-brand" href="/">Employee Login</a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span className="navbar-toggler-icon"></span>
                         </button>
@@ -96,62 +96,45 @@ const Login = () => {
             <main className="login container">
                 <p ref={errRef} className={errClass} aria-live="assertive">{errMsg}</p>
 
-                <div className="card py-4 ">
-                    <form className="form mx-auto " onSubmit={handleSubmit}>
-                        <h3 className='text-center'>Employee Login</h3>
+                <form className="form" onSubmit={handleSubmit}>
+                    <label htmlFor="username">Username:</label>
+                    <input
+                        className="form__input"
+                        type="text"
+                        id="username"
+                        ref={userRef}
+                        value={username}
+                        onChange={handleUserInput}
+                        autoComplete="off"
+                        required
+                    />
 
-                        <div className="input-group mb-3">
+                    <label htmlFor="password">Password:</label>
+                    <input
+                        className="form__input"
+                        type="password"
+                        id="password"
+                        onChange={handlePwdInput}
+                        value={password}
+                        required
+                    />
+                    <button className="form__submit-button">Sign In</button>
 
-                            <span className="input-group-text" id="basic-addon1"><i class="fa-solid fa-user"></i></span>
-                            <input
-                                className="form-control"
-                                type="text"
-                                id="username"
-                                ref={userRef}
-                                value={username}
-                                onChange={handleUserInput}
-                                autoComplete="off"
-                                required
-                                placeholder="Username"
-                            />
 
-                        </div>
-
-                        <div className="input-group mb-3">
-                            <span className="input-group-text" id="basic-addon1"><i class="fa-solid fa-lock"></i></span>
-                            <input
-                                className="form-control"
-                                type="password"
-                                id="password"
-                                onChange={handlePwdInput}
-                                value={password}
-                                placeholder="Password"
-                                required
-                            />
-                        </div>
-
-                        <label htmlFor="persist" className="form__persist">
-                            <input
-                                type="checkbox"
-                                className="form__checkbox"
-                                id="persist"
-                                onChange={handleToggle}
-                                checked={persist}
-                            />
-                            Trust This Device
-                        </label>
-
-                        <div className="text-center form-group">
-                            <button id="insertBtn" type="submit" className="btn btn-primary btn-block">
-                                Sign In
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <label htmlFor="persist" className="form__persist">
+                        <input
+                            type="checkbox"
+                            className="form__checkbox"
+                            id="persist"
+                            onChange={handleToggle}
+                            checked={persist}
+                        />
+                        Trust This Device
+                    </label>
+                </form>
             </main>
-
-            <footer className='bg-dark text-light text-center py-2'>
-                Created with ❤️ by dev!
+            <footer>
+                <Link to="/">Back to Home</Link>
             </footer>
         </section>
     )
